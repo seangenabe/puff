@@ -4,7 +4,7 @@ const defaultFilter = require('./default-filter')
 const blacklistedFunctions = new Set((function*() {
   for (let key of Object.getOwnPropertyNames(Object.prototype)) {
     let desc = Object.getOwnPropertyDescriptor(Object.prototype, key)
-    if (desc.value && desc.value === 'function') {
+    if (desc.value && typeof desc.value === 'function') {
       yield desc.value
     }
   }
