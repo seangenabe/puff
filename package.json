@@ -3,8 +3,7 @@
   "version": "1.0.0-2",
   "description": "Promisify with proxies",
   "scripts": {
-    "test": "ava",
-    "test:cov": "nyc ava",
+    "test": "nyc ava",
     "coverage": "nyc report --reporter-text-lcov | coveralls"
   },
   "author": "Sean Genabe <seangenabe@outlook.com>",
