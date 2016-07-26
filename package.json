@@ -3,7 +3,9 @@
   "version": "1.0.0-2",
   "description": "Promisify with proxies",
   "scripts": {
-    "test": "tap test/*.js"
+    "test": "ava",
+    "test:cov": "nyc ava",
+    "coverage": "nyc report --reporter-text-lcov | coveralls"
   },
   "author": "Sean Genabe <seangenabe@outlook.com>",
   "license": "MIT",
@@ -22,7 +24,23 @@
     "es2015"
   ],
   "devDependencies": {
-    "tap": "^6.2.0",
-    "tapromise": "^1.1.0"
+    "ava": "^0.15.2",
+    "coveralls": "^2.11.11",
+    "nyc": "^7.1.0"
+  },
+  "ava": {
+    "files": [
+      "test/*.test.js"
+    ],
+    "source": [
+      "*.js"
+    ],
+    "failFast": true
+  },
+  "nyc": {
+    "reporter": [
+      "lcov",
+      "text"
+    ]
   }
 }

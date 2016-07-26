@@ -34,7 +34,7 @@ module.exports = function puffDynamic(
       if (filter(key)) {
         if (typeof value === 'function') {
           if (bind) {
-            value = bind(value)
+            value = value.bind(obj)
           }
           value = fn(value, opts)
         }

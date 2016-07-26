@@ -1,8 +1,8 @@
-const t = require('tap')
-const fdynamic = require('../obj')
-const tapromise = require('tapromise')
+const t = require('ava')
+const fdynamic = require('../dynamic')
+const isPromise = require('./is-promise')
 
-t.test('basic', t => {
+t.test('basic', async t => {
   const fixture = {
     methodA(a, cb) {
       setImmediate(function() {
@@ -11,15 +11,12 @@ t.test('basic', t => {
     },
     foo: 'bar'
   }
-  t = tapromise(t)
   let o = fdynamic(fixture)
-  return Promise.all([
-    t.ok(o.foo, 'bar'),
-    t.ok(o.methodA(7), 7)
-  ])
+  t.is(o.foo, 'bar')
+  t.is(await o.methodA(7), 7)
 })
 
-t.test('bind', t => {
+t.test('bind', async t => {
   const fixture = {
     methodA(cb) {
       let context = this
@@ -29,12 +26,11 @@ t.test('bind', t => {
     },
     foo: 'bar'
   }
-  t = tapromise(t)
   let o = fdynamic(fixture)
-  return t.ok(o.methodA(), 'bar')
+  t.is(await o.methodA(), 'bar')
 })
 
-t.test('filter', t => {
+t.test('filter', async t => {
   const fixture = {
     m(cb) {
       setImmediate(() => cb(null, 1))
@@ -46,8 +42,7 @@ t.test('filter', t => {
   let o = fdynamic(fixture, { filter: key => key === 'm' })
   let r1 = o.m()
   let r2 = o.n()
-  t.ok(r1 instanceof Promise)
-  t.equals(r2, Infinity)
-  t = tapromise(t)
-  return t.equals(r1, 1)
+  t.truthy(isPromise(r1))
+  t.is(r2, Infinity)
+  t.is(await r1, 1)
 })

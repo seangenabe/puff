@@ -69,6 +69,7 @@ Promisifies the properties of an instance of a class after the instance is creat
 
 * `constructorFn` <Function> The class (constructor function).
 * `opts` <Object> → dynamic
+  * `bind` has no effect here, so it won't be passed on.
 
 Returns `Proxy<Function>`.
 

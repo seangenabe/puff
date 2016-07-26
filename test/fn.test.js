@@ -1,8 +1,8 @@
-const t = require('tap')
-const tapromise = require('tapromise')
+const t = require('ava')
 const ffn = require('../fn')
+const isPromise = require('./is-promise')
 
-t.test('positive with context', t => {
+t('positive with context', async t => {
   function fixture(x, cb) {
     let context = this
     setImmediate(function() {
@@ -12,11 +12,10 @@ t.test('positive with context', t => {
   fixture.extra = 1
   let f = ffn(fixture)
   let result = f.call('a', 'b')
-  t.ok(result instanceof Promise)
-  t.equals(f.extra, 1) // magic!
+  t.true(isPromise(result))
+  t.is(f.extra, 1) // magic!
 
-  t = tapromise(t)
-  return t.equals(result, 'ab')
+  t.is(await result, 'ab')
 })
 
 t.test('negative with context', t => {
@@ -27,18 +26,13 @@ t.test('negative with context', t => {
     })
   }
   let f = ffn(fixture)
-  let result = f.call('a')
 
-  return result.then(
-    () => { t.fail() },
-    err => {
-      t.ok(err instanceof TypeError)
-      t.ok(err.message === 'a')
-    }
-  )
+  let result = f.call('a')
+  t.truthy(isPromise(result))
+  t.throws(result, err => err instanceof TypeError && err.message === 'a')
 })
 
-t.test('multiple returns', t => {
+t.test('multiple returns', async t => {
   const fixture = function(...args) {
     let cb = args.pop()
     setImmediate(() => {
@@ -47,9 +41,9 @@ t.test('multiple returns', t => {
   }
   const f = ffn(fixture)
   const f2 = ffn(fixture, { multiArgs: true })
-  t = tapromise(t)
-  return Promise.all([
-    t.equals(f(1, 2, 3), 1),
-    t.same(f2(1, 2, 3), [1, 2, 3])
-  ])
+
+  await Promise.all((function*() {
+    yield async () => t.is(f(1, 2, 3), 1)
+    yield async () => t.same(f2(1, 2, 3), [1, 2, 3])
+  })())
 })
