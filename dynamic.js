@@ -26,7 +26,7 @@ module.exports = function puffDynamic(
   let { filter = defaultFilter, bind } = opts
 
   return new Proxy(obj, {
-    get(target, key) {
+    get(target, key, proxy) {
       let value = target[key]
       if (blacklistedKeys.has(key) || blacklistedFunctions.has(value)) {
         return value
@@ -34,7 +34,7 @@ module.exports = function puffDynamic(
       if (filter(key)) {
         if (typeof value === 'function') {
           if (bind) {
-            value = value.bind(obj)
+            value = value.bind(proxy)
           }
           value = fn(value, opts)
         }

@@ -3,13 +3,13 @@ const fauto = require('..')
 
 t('basic', async t => {
   const fixture = function(cb) {
-    setImmediate(function() {
+    process.nextTick(function() {
       cb(null, 'eggs')
     })
   }
   fixture.foo = 'bar'
   fixture.methodA = function(a, cb) {
-    setImmediate(function() {
+    process.nextTick(function() {
       cb(null, a)
     })
   }

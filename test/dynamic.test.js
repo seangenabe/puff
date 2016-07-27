@@ -1,11 +1,13 @@
-const t = require('ava')
+'use strict' // important
+
+let t = require('ava')
 const fdynamic = require('../dynamic')
 const isPromise = require('./is-promise')
 
-t.test('basic', async t => {
+t('basic', async t => {
   const fixture = {
     methodA(a, cb) {
-      setImmediate(function() {
+      process.nextTick(function() {
         cb(null, a)
       })
     },
@@ -16,24 +18,83 @@ t.test('basic', async t => {
   t.is(await o.methodA(7), 7)
 })
 
-t.test('bind', async t => {
+t('negative bind', async t => {
   const fixture = {
     methodA(cb) {
-      let context = this
-      setImmediate(function() {
-        cb(null, context.foo)
-      })
-    },
-    foo: 'bar'
+      process.nextTick(() => { cb(null, this) })
+    }
   }
-  let o = fdynamic(fixture)
-  t.is(await o.methodA(), 'bar')
+
+  let o = fdynamic(fixture, { bind: false })
+
+  let unboundFunction = o.methodA
+  t.is(await unboundFunction(), undefined)
+  t.is(await o.methodA(), o)
 })
 
-t.test('filter', async t => {
+t('negative bind outside of strict mode', async t => {
+  await (new Function('args', `
+    let { t, fdynamic } = args
+    const fixture = {
+      methodA(cb) {
+        process.nextTick(() => { cb(null, this) })
+      }
+    }
+
+    let o = fdynamic(fixture, { bind: false })
+
+    let unboundFunction = o.methodA
+    return unboundFunction().then(value => {
+      t.is(value, global)
+    })
+  `))({ t, fdynamic })
+})
+
+// Be careful here, ava totally breaks when handling proxy objects.
+t('positive bind', async t => {
+  const fixture = {
+    methodA(cb) {
+      process.nextTick(() => {
+        cb(null, this)
+      })
+    }
+  }
+
+  let o = fdynamic(fixture, { bind: true })
+
+  let unboundFunction = o.methodA
+  t.is(await o.methodA(), o)
+  let r2 = await unboundFunction()
+  t.is(await unboundFunction(), o)
+})
+
+t('positive bind outside of strict mode', async t => {
+  await (new Function('args', `
+    let { t, fdynamic } = args
+    const fixture = {
+      methodA(cb) {
+        process.nextTick(() => { cb(null, this) })
+      }
+    }
+
+    let o = fdynamic(fixture, { bind: true })
+
+    let unboundFunction = o.methodA
+    return Promise.all([
+      o.methodA().then(value => {
+        t.is(value, o)
+      }),
+      unboundFunction().then(value => {
+        t.is(value, o)
+      })
+    ])
+  `))({ t, fdynamic })
+})
+
+t('filter', async t => {
   const fixture = {
     m(cb) {
-      setImmediate(() => cb(null, 1))
+      process.nextTick(() => cb(null, 1))
     },
     n() {
       return Infinity

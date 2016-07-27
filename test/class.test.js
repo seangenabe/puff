@@ -10,7 +10,7 @@ t('basic', async t => {
       return 'q'
     }
     r(cb) {
-      setImmediate(function() {
+      process.nextTick(function() {
         cb(null, 'r')
       })
     }
@@ -18,7 +18,7 @@ t('basic', async t => {
       return 't'
     }
     static u(cb) {
-      setImmediate(function() {
+      process.nextTick(function() {
         cb(null, 'u')
       })
     }
@@ -26,7 +26,7 @@ t('basic', async t => {
   const Fixture = class extends Base {
     m(cb) {
       let context = this
-      setImmediate(function() {
+      process.nextTick(function() {
         if (!(context instanceof Fixture)) {
           return cb(null, 'm2')
         }
@@ -43,7 +43,7 @@ t('basic', async t => {
       if (this === Fixture) {
         return cb(null, 'v2')
       }
-      setImmediate(function() {
+      process.nextTick(function() {
         cb(null, 'v')
       })
     }

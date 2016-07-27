@@ -5,7 +5,7 @@ const isPromise = require('./is-promise')
 t('positive with context', async t => {
   function fixture(x, cb) {
     let context = this
-    setImmediate(function() {
+    process.nextTick(function() {
       cb(null, `${context}${x}`)
     })
   }
@@ -18,10 +18,10 @@ t('positive with context', async t => {
   t.is(await result, 'ab')
 })
 
-t.test('negative with context', t => {
+t('negative with context', t => {
   function fixture(cb) {
     let context = this
-    setImmediate(function() {
+    process.nextTick(function() {
       cb(new TypeError(context))
     })
   }
@@ -32,10 +32,10 @@ t.test('negative with context', t => {
   t.throws(result, err => err instanceof TypeError && err.message === 'a')
 })
 
-t.test('multiple returns', async t => {
+t('multiple returns', async t => {
   const fixture = function(...args) {
     let cb = args.pop()
-    setImmediate(() => {
+    process.nextTick(() => {
       cb(null, ...args)
     })
   }

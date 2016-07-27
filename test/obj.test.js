@@ -1,11 +1,14 @@
-const t = require('ava')
+let t = require('ava')
 const fobj = require('../obj')
 const isPromise = require('./is-promise')
+
+// Too many concurrent tests might be deadlocking.
+t = t.serial
 
 t('basic', async t => {
   const fixture = {
     methodA(a, cb) {
-      setImmediate(function() {
+      process.nextTick(function() {
         cb(null, a)
       })
     },
@@ -16,11 +19,11 @@ t('basic', async t => {
   t.is(await o.methodA(7), 7)
 })
 
-t.test('bind', async t => {
+t('bind', async t => {
   const fixture = {
     methodA(cb) {
       let context = this
-      setImmediate(function() {
+      process.nextTick(function() {
         cb(null, context.foo)
       })
     },
@@ -30,10 +33,10 @@ t.test('bind', async t => {
   t.is(await o.methodA(), 'bar')
 })
 
-t.test('filter', async t => {
+t('filter', async t => {
   const fixture = {
     m(cb) {
-      setImmediate(() => cb(null, 1))
+      process.nextTick(() => cb(null, 1))
     },
     n() {
       return Infinity
