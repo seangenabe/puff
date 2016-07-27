@@ -37,7 +37,6 @@ Promisifies the enumerable properties of an object.
 * `opts` <Object> → fn
   * `filter` <Function> A function to filter the keys with. Default = `defaultFilter`
   * `bind` <Boolean> Pass ("bind") the object to the function as its context.
-  * `inherited` <Boolean> Include inherited properties from the object prototype.
 
 Caches all the promisified functions, no hit on property access.
 
@@ -113,12 +112,6 @@ The point is that you can mix and match the modules provided to match your needs
 ### Notes
 
 `→` means "also passed to (the right side)"
-
-## Changelog
-
-2.0.0
-
-* Removed `keys` option for `obj`. Please use `filter`.
 
 ## Special thanks
 

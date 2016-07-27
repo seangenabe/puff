@@ -5,17 +5,8 @@ module.exports = function puffObj(
   obj,
   opts = {}
 ) {
-  let { filter = defaultFilter, bind, inherited } = opts
-  let keys
-  if (inherited) {
-    keys = []
-    for (let key in obj) { // eslint-disable-line guard-for-in
-      keys.push(key)
-    }
-  }
-  else {
-    keys = Object.keys(obj)
-  }
+  let { filter = defaultFilter, bind } = opts
+  let keys = Object.keys(obj)
 
   let functions = {}
   let proxy = new Proxy(obj, {
