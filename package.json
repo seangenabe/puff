@@ -1,6 +1,6 @@
 {
   "name": "puff",
-  "version": "1.0.0-3",
+  "version": "1.0.0",
   "description": "Promisify with proxies",
   "scripts": {
     "test": "nyc ava",
