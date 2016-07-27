@@ -35,11 +35,5 @@
       "*.js"
     ],
     "failFast": true
-  },
-  "nyc": {
-    "reporter": [
-      "lcov",
-      "text"
-    ]
   }
 }
