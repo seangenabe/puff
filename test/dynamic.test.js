@@ -50,7 +50,6 @@ t('negative bind outside of strict mode', async t => {
   `))({ t, fdynamic })
 })
 
-// Be careful here, ava totally breaks when handling proxy objects.
 t('positive bind', async t => {
   const fixture = {
     methodA(cb) {

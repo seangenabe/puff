@@ -1,9 +1,8 @@
+'use strict' // important
+
 let t = require('ava')
 const fobj = require('../obj')
 const isPromise = require('./is-promise')
-
-// Too many concurrent tests might be deadlocking.
-t = t.serial
 
 t('basic', async t => {
   const fixture = {
@@ -19,18 +18,76 @@ t('basic', async t => {
   t.is(await o.methodA(7), 7)
 })
 
-t('bind', async t => {
+t('negative bind', async t => {
   const fixture = {
     methodA(cb) {
-      let context = this
-      process.nextTick(function() {
-        cb(null, context.foo)
-      })
-    },
-    foo: 'bar'
+      process.nextTick(() => { cb(null, this) })
+    }
   }
-  let o = fobj(fixture)
-  t.is(await o.methodA(), 'bar')
+
+  let o = fobj(fixture, { bind: false })
+
+  let unboundFunction = o.methodA
+  t.is(await unboundFunction(), undefined)
+  t.is(await o.methodA(), o)
+})
+
+t('negative bind outside of strict mode', async t => {
+  await (new Function('args', `
+    let { t, fobj } = args
+    const fixture = {
+      methodA(cb) {
+        process.nextTick(() => { cb(null, this) })
+      }
+    }
+
+    let o = fobj(fixture, { bind: false })
+
+    let unboundFunction = o.methodA
+    return unboundFunction().then(value => {
+      t.is(value, global)
+    })
+  `))({ t, fobj })
+})
+
+t('positive bind', async t => {
+  const fixture = {
+    methodA(cb) {
+      process.nextTick(() => {
+        cb(null, this)
+      })
+    }
+  }
+
+  let o = fobj(fixture, { bind: true })
+
+  let unboundFunction = o.methodA
+  t.is(await o.methodA(), o)
+  let r2 = await unboundFunction()
+  t.is(await unboundFunction(), o)
+})
+
+t('positive bind outside of strict mode', async t => {
+  await (new Function('args', `
+    let { t, fobj } = args
+    const fixture = {
+      methodA(cb) {
+        process.nextTick(() => { cb(null, this) })
+      }
+    }
+
+    let o = fobj(fixture, { bind: true })
+
+    let unboundFunction = o.methodA
+    return Promise.all([
+      o.methodA().then(value => {
+        t.is(value, o)
+      }),
+      unboundFunction().then(value => {
+        t.is(value, o)
+      })
+    ])
+  `))({ t, fobj })
 })
 
 t('filter', async t => {

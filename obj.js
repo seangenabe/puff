@@ -5,31 +5,32 @@ module.exports = function puffObj(
   obj,
   opts = {}
 ) {
-  let { filter = defaultFilter, bind, inherited, keys } = opts
-  if (keys == null) {
-    if (inherited) {
-      keys = []
-      for (let key in obj) { // eslint-disable-line guard-for-in
-        keys.push(key)
-      }
+  let { filter = defaultFilter, bind, inherited } = opts
+  let keys
+  if (inherited) {
+    keys = []
+    for (let key in obj) { // eslint-disable-line guard-for-in
+      keys.push(key)
     }
-    else {
-      keys = Object.keys(obj)
-    }
+  }
+  else {
+    keys = Object.keys(obj)
   }
 
   let functions = {}
+  let proxy = new Proxy(obj, {
+    get(target, key) {
+      let objFn = functions[key]
+      return objFn ? objFn : obj[key]
+    }
+  })
+
   for (let key of keys) {
     let objFn = obj[key]
     if (typeof objFn === 'function' && filter(key)) {
-      functions[key] = fn(bind ? objFn.bind(obj) : objFn, opts)
+      functions[key] = fn(bind ? objFn.bind(proxy) : objFn, opts)
     }
   }
 
-  return new Proxy(obj, {
-    get(target, key) {
-      let objFn = functions[key]
-      return objFn ? objFn : target[key]
-    }
-  })
+  return proxy
 }
