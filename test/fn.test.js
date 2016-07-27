@@ -4,9 +4,8 @@ const isPromise = require('./is-promise')
 
 t('positive with context', async t => {
   function fixture(x, cb) {
-    let context = this
-    process.nextTick(function() {
-      cb(null, `${context}${x}`)
+    process.nextTick(() => {
+      cb(null, `${this}${x}`)
     })
   }
   fixture.extra = 1
@@ -20,9 +19,8 @@ t('positive with context', async t => {
 
 t('negative with context', t => {
   function fixture(cb) {
-    let context = this
-    process.nextTick(function() {
-      cb(new TypeError(context))
+    process.nextTick(() => {
+      cb(new TypeError(this))
     })
   }
   let f = ffn(fixture)
@@ -42,8 +40,7 @@ t('multiple returns', async t => {
   const f = ffn(fixture)
   const f2 = ffn(fixture, { multiArgs: true })
 
-  await Promise.all((function*() {
-    yield async () => t.is(f(1, 2, 3), 1)
-    yield async () => t.same(f2(1, 2, 3), [1, 2, 3])
-  })())
+  t.is(await f(1, 2, 3), 1, 'should return just the first value')
+  t.deepEqual(await f2(1, 2, 3), [1, 2, 3],
+    'should return all values in an array')
 })

@@ -4,7 +4,7 @@
   "description": "Promisify with proxies",
   "scripts": {
     "test": "nyc ava",
-    "coverage": "nyc report --reporter-text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "author": "Sean Genabe <seangenabe@outlook.com>",
   "license": "MIT",
