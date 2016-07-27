@@ -3,6 +3,9 @@
 Promisify with proxies
 
 [![npm](https://img.shields.io/npm/v/puff.svg?style=flat-square)](https://www.npmjs.com/package/puff)
+[![Build Status](https://img.shields.io/travis/seangenabe/puff/master.svg?style=flat-square)](https://travis-ci.org/seangenabe/puff)
+[![Coverage Status](https://img.shields.io/coveralls/seangenabe/puff/master.svg?style=flat-square)](https://coveralls.io/github/seangenabe/puff?branch=master)
+[![devDependency Status](https://img.shields.io/david/dev/seangenabe/puff.svg?style=flat-square)](https://david-dm.org/seangenabe/puff#info=devDependencies)
 [![node](https://img.shields.io/node/v/puff.svg?style=flat-square)](https://nodejs.org/en/download/)
 
 ## Intro
