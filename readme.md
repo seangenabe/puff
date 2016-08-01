@@ -39,7 +39,7 @@ Promisifies the enumerable properties of an object.
 * `objArg` <Object> The object.
 * `opts` <Object> → fn
   * `filter` <Function> A function to filter the keys with. Default = `defaultFilter`
-  * `bind` <Boolean> Pass ("bind") the object to the function as its context.
+  * `bind` <Boolean> | <String> Pass `true` to bind the returned proxy to the promisified functions. Pass the string `original` to bind the original object instead.
 
 Caches all the promisified functions, no hit on property access.
 
@@ -54,7 +54,7 @@ Promisifies all of the properties of an object.
 * `objArg` <Object> The object.
 * `opts` <Object> → fn
   * `filter` <Function> A function to filter which keys should be promisified when called. Default = `defaultFilter`
-  * `bind` <Boolean> Pass ("bind") the object to the function as its context.
+  * `bind` <Boolean> | <String> Pass `true` to bind the returned proxy to the promisified functions. Pass the string `original` to bind the original object instead.
 
 Simplified proxy creation but takes a small hit on property access.
 

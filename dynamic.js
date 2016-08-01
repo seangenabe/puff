@@ -33,7 +33,10 @@ module.exports = function puffDynamic(
       }
       if (filter(key)) {
         if (typeof value === 'function') {
-          if (bind) {
+          if (bind === 'original') {
+            value = value.bind(target)
+          }
+          else if (bind) {
             value = value.bind(proxy)
           }
           value = fn(value, opts)

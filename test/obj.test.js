@@ -106,3 +106,19 @@ t('filter', async t => {
   t.is(r2, Infinity)
   t.is(await r1, 1)
 })
+
+t('bind original', async t => {
+  const fixture = {
+    a(cb) {
+      process.nextTick(() => {
+        if (this === fixture) {
+          return cb(null, 'a')
+        }
+        cb(new Error())
+      })
+    }
+  }
+  let o = fobj(fixture, { bind: 'original' })
+  let unboundFunction = o.a
+  t.is(await unboundFunction(), 'a')
+})

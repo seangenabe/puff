@@ -19,7 +19,17 @@ module.exports = function puffObj(
   for (let key of keys) {
     let objFn = obj[key]
     if (typeof objFn === 'function' && filter(key)) {
-      functions[key] = fn(bind ? objFn.bind(proxy) : objFn, opts)
+      let fnValue
+      if (bind === 'original') {
+        fnValue = objFn.bind(obj)
+      }
+      else if (bind) {
+        fnValue = objFn.bind(proxy)
+      }
+      else {
+        fnValue = objFn
+      }
+      functions[key] = fn(fnValue, opts)
     }
   }
 
