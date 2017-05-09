@@ -1,5 +1,7 @@
 # puff
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/seangenabe/puff.svg)](https://greenkeeper.io/)
+
 Promisify with proxies
 
 [![npm](https://img.shields.io/npm/v/puff.svg?style=flat-square)](https://www.npmjs.com/package/puff)
