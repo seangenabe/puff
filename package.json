@@ -23,7 +23,7 @@
     "es2015"
   ],
   "devDependencies": {
-    "ava": "^0.18.0",
+    "ava": "^0.25.0",
     "coveralls": "^3.0.0",
     "nyc": "^11.0.0"
   },
